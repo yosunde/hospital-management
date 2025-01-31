@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Life Hospital</title>
+    <link rel="stylesheet" href="../css/contact.css">
+    <script>
+       
+        window.onload = function() { };
+        function logout() { }
+        function updateDateTime() { }
+        setInterval(updateDateTime, 1000);
+    </script>
+</head>
+<body onload="updateDateTime()">
+    <header>
+        <h1>Hospital Appointment System</h1>
+        <div class="header-right">
+            <span class="isim"></span>
+            <div class="profile-icon onclick="toggleDropdown()"></div> 
+            <div class="dropdown-menu">
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+    <nav>
+        <a href="../html/home.html">Home</a> 
+        <a href="../html/appointment.html" class="randevu-al">Make an Appointment</a> 
+        <a href="../html/myappointment.html">My Appointments</a> 
+        <a href="../html/polyclinics.html">Polyclinics</a> 
+        <a href="../html/aboutus.html">About Us</a> 
+        <a href="../html/contact.html">Contact</a> 
+    </nav>
+
+    <main class="contact-page">
+        <section class="contact-info">
+            <h2>Contact Us</h2>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3010.4781014133546!2d29.02244757585882!3d41.014794971349666!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cab81f3b28460d%3A0xe075f05eef41d742!2sZeynep%20Kamil%20Hastanesi%20Do%C4%9Fum%20Acil%20Servisi!5e0!3m2!1str!2str!4v1735075059869!5m2!1str!2str" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>            </div>
+            <div class="contact-details">
+                <p>Phone: (0216) 391 06 80</p>
+                <p>Address: Uskudar/Istanbul</p>
+            </div>
+        </section>
+
+        <section class="contact-form">
+            <h2>Get in Touch</h2>
+            <form>
+                <input type="text" id="name" name="name" placeholder="Name" required>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="tel" id="phone" name="phone" placeholder="Phone Number">
+                <textarea id="message" name="message" placeholder="Message" rows="4" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Life Hospital. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // show user name
+            const userName = localStorage.getItem('userName');
+            const userNameElement = document.querySelector('.isim');
+            if (userNameElement && userName) {
+                userNameElement.textContent = userName;
+            } else {
+                window.location.href = '../html/login.html';
+            }
+
+            // send contact form
+            const contactForm = document.querySelector('.contact-form form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    alert('Message sent successfully!');
+                    this.reset();
+                });
+            }
+        });
+    
+        function logout() {
+            localStorage.removeItem('userName');
+            window.location.href = '../html/login.html';
+        }
+    
+        function updateDateTime() {
+            const now = new Date();
+            const dateTimeString = now.toLocaleString('tr-TR');
+            document.getElementById('current-time').textContent = dateTimeString;
+        }
+    
+        setInterval(updateDateTime, 1000);
+        </script>
+</body>
+</html>

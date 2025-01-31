@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments</title>
+    <link rel="stylesheet" href="../css/appointments.css">
+</head>
+<body>
+    <header>
+        <h1>Hospital Appointment System</h1>
+        <div class="header-right">
+            <span class="isim"></span>
+            <div class="profile-icon onclick="toggleDropdown()"></div> 
+                <button onclick="logout()">Logout</button>
+        </div>
+    </header>
+    <nav>
+        <a href="home.html">Home</a> 
+        <a href="appointment.html">Make an Appointment</a> 
+        <a href="myappointment.html" class="active">My Appointments</a> 
+        <a href="polyclinics.html">Polyclinics</a> 
+        <a href="aboutus.html">About Us</a> 
+        <a href="contact.html">Contact</a> 
+    </nav>
+    <main>
+        <div class="appointments-container">
+            <h2>My Appointments</h2>
+            <div class="appointments-list">
+                
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Life Hospital. All rights reserved.</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // show user name
+        const userName = localStorage.getItem('userName');
+        const userNameElement = document.querySelector('.isim');
+        if (userNameElement && userName) {
+            userNameElement.textContent = userName;
+        }
+
+        // get appointments
+        fetch('../php/get_my_appointments.php')
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'error') {
+                    throw new Error(result.message);
+                }
+
+                const appointments = result.data;
+                const appointmentsList = document.querySelector('.appointments-list');
+                
+                if (!appointments || appointments.length === 0) {
+                    appointmentsList.innerHTML = '<p class="no-appointments">No appointments found.</p>';
+                    return;
+                }
+
+                appointmentsList.innerHTML = '';
+                appointments.forEach(appointment => {
+                    const date = new Date(appointment.appointment_date);
+                    const formattedDate = date.toLocaleDateString('tr-TR');
+                    const time = appointment.appointment_time.substring(0, 5);
+
+                    const appointmentCard = document.createElement('div');
+                    appointmentCard.className = 'appointment-card';
+                    appointmentCard.innerHTML = `
+                        <div class="appointment-info">
+                            <h3>Dr. ${appointment.doctor_name}</h3>
+                            <p class="department">${appointment.specialty}</p>
+                            <p class="datetime">${formattedDate} - ${time}</p>
+                            <p class="status ${appointment.status}">${appointment.status}</p>
+                        </div>
+                        <div class="appointment-actions">
+                            ${appointment.status === 'active' ? 
+                                `<button class="cancel-btn" data-id="${appointment.id}">Cancel Appointment</button>` 
+                                : ''}
+                        </div>
+                    `;
+                    document.querySelector('.appointments-list').appendChild(appointmentCard);
+                });
+
+                // event listener for cancel buttons
+                document.querySelectorAll('.cancel-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        if (confirm('Are you sure you want to cancel this appointment?')) {
+                            const appointmentId = this.dataset.id;
+                            fetch('../php/cancel_appointment.php', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ appointment_id: appointmentId })
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert('Appointment cancelled successfully!');
+                                    location.reload();
+                                } else {
+                                    alert('Error: ' + data.message);
+                                }
+                            });
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.querySelector('.appointments-list').innerHTML = 
+                    '<p class="no-appointments">Error loading appointments.</p>';
+            });
+    });
+    </script>
+</body>
+</html>

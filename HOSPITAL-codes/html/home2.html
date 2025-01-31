@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Home</title>
+    <link rel="stylesheet" href="../css/homepage.css">
+</head>
+<body>
+    <header>
+        <h1>Hospital Appointment System</h1>
+        <div class="header-right">
+            <span class="doctor-name"></span>
+            <div class="profile-icon onclick="toggleDropdown()"></div> 
+            <div class="dropdown-menu">
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+    <nav>
+        <a href="../html/home2.html" class="active">Home</a>
+        <a href="../html/appointment2.html">My Appointments</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </nav>
+    <main>
+        <div class="welcome-section">
+            <h2>Welcome, Dr. <span class="doctor-welcome-name"></span></h2>
+            <p>You can view and manage your appointments from the menu above.</p>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Today's Appointments</h3>
+                <div class="stat-number" id="todayAppointments">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Appointments</h3>
+                <div class="stat-number" id="activeAppointments">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Patients</h3>
+                <div class="stat-number" id="totalPatients">0</div>
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Life Hospital. All rights reserved.</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const doctorName = localStorage.getItem('doctorName');
+        const doctorId = localStorage.getItem('doctorId');
+        
+        if (!doctorName || !doctorId) {
+            window.location.href = '../html/login.html';
+            return;
+        }
+
+        document.querySelector('.doctor-name').textContent = 'Dr. ' + doctorName;
+        document.querySelector('.doctor-welcome-name').textContent = doctorName;
+
+        // show istatistics
+        fetch(`../php/get_doctor_stats.php?doctor_id=${doctorId}`)
+            .then(response => response.json())
+            .then(stats => {
+                document.getElementById('todayAppointments').textContent = stats.today || 0;
+                document.getElementById('activeAppointments').textContent = stats.active || 0;
+                document.getElementById('totalPatients').textContent = stats.total || 0;
+            });
+    });
+
+    function logout() {
+        localStorage.removeItem('doctorName');
+        localStorage.removeItem('doctorId');
+        window.location.href = '../html/login.html';
+    }
+    </script>
+</body>
+</html>

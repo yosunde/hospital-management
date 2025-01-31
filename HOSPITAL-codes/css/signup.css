@@ -1,0 +1,102 @@
+/* Genel Stil */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+}
+
+/* Header Stil */
+.register-header {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #0078D7;
+}
+
+.register-header h1 {
+    font-size: 2em;
+}
+
+/* Kayıt formu kutusu */
+.register-container {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Başlık */
+.register-container h2 {
+    margin-bottom: 20px;
+    color: #0078D7;
+    font-size: 1.5em;
+}
+
+/* Form grubu */
+.form-group-register {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group-register label {
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    display: block;
+}
+
+.form-group-register input {
+    width: 95%;
+    padding: 12px;
+    margin-top: 6px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    color: #333;
+}
+
+.form-group-register input:focus {
+    border-color: #0078D7;
+    outline: none;
+}
+
+/* Buton */
+.register-btn {
+    width: 100%;
+    padding: 14px;
+    background-color: #0078D7;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.register-btn:hover {
+    background-color: #005BB5;
+}
+
+/* Footer metni */
+.footer-text-register {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+.footer-text-register a {
+    color: #0078D7;
+    text-decoration: none;
+}
+
+.footer-text-register a:hover {
+    text-decoration: underline;
+}

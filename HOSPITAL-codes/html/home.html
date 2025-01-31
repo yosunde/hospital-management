@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life Hospital</title>
+    <link rel="stylesheet" href="../css/homepage.css">
+</head>
+<body onload="updateDateTime()">
+    <header>
+        <h1>Hospital Appointment System</h1>
+        <div class="header-right">
+            <span class="isim"></span>
+            <div class="profile-container">
+                <div class="profile-icon" onclick="toggleDropdown()"></div>
+                <div class="dropdown-menu">
+                    <button onclick="document.getElementById('profilePhotoInput').click()" class="dropdown-item">Change Profile Photo</button>
+                    <input type="file" id="profilePhotoInput" accept="image/*" onchange="updateProfilePhoto(this)" hidden>
+                    <hr>
+                    <button onclick="logout()" class="dropdown-item">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav>
+        <a href="../html/home.html">Home</a> 
+        <a href="../html/appointment.html" class="randevu-al">Make an Appointment</a> 
+        <a href="../html/myappointment.html">My Appointments</a> 
+        <a href="../html/polyclinics.html">Polyclinics</a> 
+        <a href="../html/aboutus.html">About Us</a> 
+        <a href="../html/contact.html">Contact</a> 
+    </nav>
+
+    <main>
+        <section class="hero">
+            <img src="../images/hospital-logo.png" alt="Hero Resmi" class="hero-image"> </div>
+            <div class="hero-text">
+                <h1>WELCOME TO LIFE HOSPITAL</h1>
+                <p>WE CARE ABOUT YOUR HEALTH</p>
+            </div>
+        </section>
+
+        <section class="about">
+            <div class="section-content">
+                <img src="../images/about-us.webp" alt="Hakkımızda Resmi">
+                <div class="section-text">
+                    <h2>About Us</h2>
+                    <p>As Life Hospital, we aim to provide the highest quality service for the health of you and your loved ones. We are at your service with our experienced expert staff, state-of-the-art equipment and patient-oriented approach.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="services">
+            <div class="section-content">
+                <div class="section-text">
+                    <h2>Our Services</h2>
+                        <ul>
+                            <li>General Health Check-ups</li>
+                            <li>Emergency Services</li>
+                            <li>Surgical Interventions</li>
+                            <li>Women's and Children's Health</li>
+                            <li>Cardiology, Orthopedics, and more...</li>
+                        </ul>
+                </div>
+                <img src="../images/services.jpg" alt="Our Services Image">
+            </div>
+        </section>
+
+        <section class="choose-us">
+            <div class="section-content">
+                <img src="../images/our-values.webp" alt="Why Choose Us Image">
+                <div class="section-text">
+                    <h2>Why Choose Us?</h2>
+                    <ul>
+                        <li>24/7 Emergency Services</li>
+                        <li>Friendly and expert team</li>
+                        <li>Modern and comfortable patient rooms</li>
+                        <li>Easy-to-reach location</li>
+                    </ul>
+                    <p>We focus on your health journey. Our services are designed to support you at every step of your medical journey with a knowledgeable and caring team.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="appointment-now">
+            <div class="section-content">
+                <div class="section-text">
+                    <h2>Make an Appointment Now</h2>
+                    <p>Take a step ahead in your health journey. Book your appointment now to access our quality healthcare services.</p>
+                </div>
+                <img src="../images/choose.jpg" alt="Make an Appointment Image">
+            </div>
+        </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Life Hospital. All rights reserved.</p>
+        </footer>
+
+->
+    <script>
+        window.onload = function() {
+            // show user name and get it from LocalStorage
+            const userName = localStorage.getItem('userName');
+            if (userName) {
+                document.querySelector('.isim').textContent = userName;
+            } else {
+                // if there is no login, redirect to login page
+                window.location.href = '../html/login.html';
+            }
+        }
+    
+        function logout() {
+            localStorage.removeItem('userName');
+            window.location.href = '../html/login.html';
+        }
+    
+        function updateDateTime() {
+            const now = new Date();
+            const dateTimeString = now.toLocaleString('tr-TR');
+            document.getElementById('current-time').textContent = dateTimeString;
+        }
+
+        // Dropdown menu
+function toggleDropdown() {
+    const dropdown = document.querySelector('.dropdown-menu');
+    dropdown.classList.toggle('show');
+}
+
+// close dropdown menu when click outside 
+document.addEventListener('click', function(event) {
+    const profileContainer = document.querySelector('.profile-container');
+    const dropdown = document.querySelector('.dropdown-menu');
+    
+    if (!profileContainer.contains(event.target)) {
+        dropdown.classList.remove('show');
+    }
+});
+
+function updateProfilePhoto(input) {
+    if (input.files && input.files[0]) {
+        const formData = new FormData();
+        formData.append('photo', input.files[0]);
+        formData.append('userId', localStorage.getItem('userId'));
+
+       
+        console.log('UserId:', localStorage.getItem('userId'));
+        console.log('File:', input.files[0]);
+
+        fetch('../php/update_profile_photo.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Response:', data); 
+            if (data.success) {
+                const profileIcon = document.querySelector('.profile-icon');
+                profileIcon.style.backgroundImage = `url(${data.photoUrl})`;
+                document.querySelector('.dropdown-menu').classList.remove('show');
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while updating profile photo');
+        });
+    }
+}
+    
+        setInterval(updateDateTime, 1000);
+
+ 
+        </script>
+    </body>
+</html>

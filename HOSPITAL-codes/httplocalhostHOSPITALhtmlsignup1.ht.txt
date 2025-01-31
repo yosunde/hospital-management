@@ -1,0 +1,31 @@
+http://localhost/HOSPITAL/html/signup1.html           site
+
+You Should upload your project to a 
+(free hosting server for php with mysql) and provide the link of your project in the report 
+
+
+INSERT INTO doctors (first_name, last_name, email, password, specialty) VALUES
+('Ayşe', 'Yılmaz', 'ayse.yilmaz@hospital.com', '1234', 'anesthesia and reanimation'),
+('Mehmet', 'Demir', 'mehmet.demir@hospital.com', 'abcd', 'anesthesia and reanimation'),
+('Ali', 'Can', 'ali.can@hospital.com', '1a2b', 'neurosurgery'),
+('Elif', 'Kaya', 'elif.kaya@hospital.com', 'a1b2', 'neurosurgery'),
+('Fatma', 'Türk', 'fatma.turk@hospital.com', 'sdfg', 'pediatric surgery'),
+('Deniz', 'Aksoy', 'deniz.aksoy@hospital.com', 'rasd', 'pediatric surgery'),
+('Serkan', 'Öztürk', 'serkan.ozturk@hospital.com', 'mlkd', 'general surgery'),
+('Zeynep', 'Aksoy', 'fatma.turk@hospital.com', 'lkop', 'general surgery'),
+('Canan', 'Demirci', 'canan.demirci@hospital.com', 'njkl', 'thoracic surgery'),
+('Pelin', 'Kaya', 'pelin.kaya@hospital.com', 'oklp', 'thoracic surgery'),
+('Deniz', 'Soyer', 'deniz.soyer@hospital.com', 'nykl', 'ophthalmology'),
+('Berk', 'Özkan', 'berk.ozkan@hospital.com', 'bvgy', 'ophthalmology'),
+('Gülşen', 'Arslan', 'gulsen.arslan@hospital.com', 'b8yu', 'obstetrics and gynecology'),
+('Ayten', 'Yücel', 'ayten.yucel@hospital.com', 'a89y', 'obstetrics and gynecology'),
+('Murat', 'Kaya', 'murat.kaya@hospital.com', 'b7hy', 'cardiovascular surgery'),
+('Selim', 'Erdem', 'selim.erdem@hospital.com', '7302', 'cardiovascular surgery'),
+('Özgür', 'Demir', 'ozgur.demir@hospital.com', 'basy', 'ear,nose and throat'),
+('Pınar', 'Can', 'pinar.can@hospital.com', 'yu7v', 'ear, nose and throat'),
+('Hasan ', 'Çelik', 'hasan.celik@hospital.com', 'brty', 'obesity and obesity surgery'),
+('Ayşe', 'Kaya', 'ayse.kaya@hospital.com', '56ct', 'obesity and obesity surgery'),
+('Veli', 'Akın', 'veli.akin@hospital.com', '1109', 'organ transplantation'),
+('Elif', 'Demirci', 'elif.demirci@hospital.com', 'a89m', 'organ transplantation'),
+('Tarık', 'Yılmaz', 'tarik.yilmaz@hospital.com', 'n0sa', 'orthopedics and traumotology'),
+('Seda', 'Demirci', 'seda.demirci@hospital.com', 'vxy7', 'orthopedics and traumotology'),

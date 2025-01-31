@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make an Appointment</title>
+    <link rel="stylesheet" href="../css/appointments.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Hospital Appointment System</h1>
+        <div class="header-right">
+            <span class="isim"></span>
+            <div class="profile-container">
+                <div class="profile-icon" onclick="toggleDropdown()"></div>
+                <div class="dropdown-menu">
+                    <button onclick="document.getElementById('profilePhotoInput').click()" class="dropdown-item">Change Profile Photo</button>
+                    <input type="file" id="profilePhotoInput" accept="image/*" onchange="updateProfilePhoto(this)" hidden>
+                    <hr>
+                    <button onclick="logout()" class="dropdown-item">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="../html/home.html">Home</a> 
+        <a href="../html/appointment.html" class="randevu-al">Make an Appointment</a> 
+        <a href="../html/myappointment.html">My Appointments</a> 
+        <a href="../html/polyclinics.html">Polyclinics</a> 
+        <a href="../html/aboutus.html">About Us</a> 
+        <a href="../html/contact.html">Contact</a> 
+    <main>
+        <div class="appointment-form">
+            <h2>Make an Appointment</h2>
+            <div class="form-group">
+                <label for="department">Department:</label>
+                <select id="department" required>
+                    <option value="">Select Department</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="doctor">Doctor:</label>
+                <select id="doctor" required disabled>
+                    <option value="">First select a department</option>
+                </select>
+            </div>
+            <div id="saatler" style="display: none;">
+                <h3>Available Hours</h3>
+                <div id="saatButonlari"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2024 Life Hospital. All rights reserved.</p>
+    </footer>
+
+    <script>
+    // Gerekli elementleri seç
+    const departmentSelect = document.getElementById('department');
+    const doctorSelect = document.getElementById('doctor');
+    const saatlerDiv = document.getElementById('saatler');
+    const saatButonlariDiv = document.getElementById('saatButonlari');
+
+    // Departmanları yükle
+    fetch('../php/get_departments.php')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(departments => {
+            console.log('Departments:', departments); // Debug için
+            departmentSelect.innerHTML = '<option value="">Select Department</option>';
+            departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.specialty;
+                option.textContent = dept.specialty;
+                departmentSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            departmentSelect.innerHTML = '<option value="">Error loading departments</option>';
+        });
+
+    // Departman seçildiğinde doktorları yükle
+    departmentSelect.addEventListener('change', function() {
+        const selectedDepartment = this.value;
+        console.log('Selected department:', selectedDepartment); // Debug için
+
+        if (!selectedDepartment) {
+            doctorSelect.innerHTML = '<option value="">First select a department</option>';
+            doctorSelect.disabled = true;
+            return;
+        }
+
+        fetch('../php/get_doctors.php?department=' + encodeURIComponent(selectedDepartment))
+            .then(response => {
+                console.log('Response status:', response.status); // Debug için
+                return response.json();
+            })
+            .then(doctors => {
+                console.log('Received doctors:', doctors); // Debug için
+                doctorSelect.innerHTML = '<option value="">Select Doctor</option>';
+                
+                if (Array.isArray(doctors) && doctors.length > 0) {
+                    doctors.forEach(doctor => {
+                        const option = document.createElement('option');
+                        option.value = doctor.id;
+                        option.textContent = `Dr. ${doctor.first_name} ${doctor.last_name}`;
+                        doctorSelect.appendChild(option);
+                    });
+                    doctorSelect.disabled = false;
+                } else {
+                    doctorSelect.innerHTML = '<option value="">No doctors available in this department</option>';
+                    doctorSelect.disabled = true;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                doctorSelect.innerHTML = '<option value="">Error loading doctors</option>';
+                doctorSelect.disabled = true;
+            });
+    });
+
+    // Doktor seçildiğinde
+    doctorSelect.addEventListener('change', function() {
+        const selectedDoctor = this.value;
+        if (!selectedDoctor) {
+            saatlerDiv.style.display = 'none';
+            return;
+        }
+
+        fetch('../php/get_availability.php?doctor_id=' + encodeURIComponent(selectedDoctor))
+            .then(response => response.json())
+            .then(availability => {
+                saatButonlariDiv.innerHTML = '';
+                
+                if (availability.message) {
+                    saatButonlariDiv.innerHTML = '<p>' + availability.message + '</p>';
+                    return;
+                }
+
+                availability.forEach(slot => {
+                    const button = document.createElement('button');
+                    button.className = 'time-button';
+                    button.textContent = `${slot.available_date} - ${slot.available_time}`;
+                    button.onclick = () => saveAppointment(selectedDoctor, `${slot.available_date} ${slot.available_time}`);
+                    saatButonlariDiv.appendChild(button);
+                });
+                
+                saatlerDiv.style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                saatButonlariDiv.innerHTML = 'Error loading available hours';
+            });
+    });
+
+    // Randevu kaydet
+    function saveAppointment(doctorId, time) {
+        const data = {
+            doctor_id: doctorId,
+            time: time
+        };
+
+        fetch('../php/save_appointment.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('Appointment saved successfully!');
+                window.location.href = '../html/myappointment.html';
+            } else {
+                alert('Error saving appointment: ' + result.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error saving appointment');
+        });
+    }
+
+    // Dropdown menü için
+    function toggleDropdown() {
+        document.querySelector('.dropdown-menu').classList.toggle('show');
+    }
+
+    // Profil fotoğrafı güncelleme
+    function updateProfilePhoto(input) {
+        if (input.files && input.files[0]) {
+            const formData = new FormData();
+            formData.append('photo', input.files[0]);
+            formData.append('userId', localStorage.getItem('userId'));
+
+            fetch('../php/update_profile_photo.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const profileIcon = document.querySelector('.profile-icon');
+                    profileIcon.style.backgroundImage = `url(${data.photoUrl})`;
+                    document.querySelector('.dropdown-menu').classList.remove('show');
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating profile photo');
+            });
+        }
+    }
+
+    // Logout fonksiyonu
+    function logout() {
+        window.location.href = '../html/login.html';
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Appointments</title>
+    <link rel="stylesheet" href="../css/appointments.css">
+</head>
+<body>
+    <header>
+        <h1>Hospital Appointment System</h1>
+        <div class="header-right">
+            <span class="doctor-name"></span>
+            <div class="profile-icon onclick="toggleDropdown()"></div> 
+            <div class="dropdown-menu">
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+    <nav>
+        <a href="../html/home2.html">Home</a>
+        <a href="../html/appointment2.html" class="active">My Appointments</a>
+        <a href="#" onclick="logout()">Logout</a>
+    </nav>
+    <main>
+        <div class="appointments-container">
+            <h2>My Patient Appointments</h2>
+            <div class="filter-section">
+                <select id="statusFilter">
+                    <option value="all">All Appointments</option>
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="appointments-list">
+
+            </div>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2024 Life Hospital. All rights reserved.</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // show doctor name
+        const doctorName = localStorage.getItem('doctorName');
+        const doctorId = localStorage.getItem('doctorId');
+        const doctorNameElement = document.querySelector('.doctor-name');
+        if (doctorNameElement && doctorName) {
+            doctorNameElement.textContent = 'Dr. ' + doctorName;
+        } else {
+            window.location.href = '../html/login.html';
+        }
+
+        // get appointments
+        function loadAppointments(status = 'all') {
+            fetch(`../php/get_doctor_appointments.php?doctor_id=${doctorId}&status=${status}`)
+                .then(response => response.json())
+                .then(appointments => {
+                    const appointmentsList = document.querySelector('.appointments-list');
+                    appointmentsList.innerHTML = '';
+
+                    if (appointments.length === 0) {
+                        appointmentsList.innerHTML = '<p class="no-appointments">No appointments found.</p>';
+                        return;
+                    }
+
+                    appointments.forEach(appointment => {
+                        const date = new Date(appointment.appointment_date);
+                        const formattedDate = date.toLocaleDateString('tr-TR');
+                        const time = appointment.appointment_time.substring(0, 5);
+
+                        const appointmentCard = document.createElement('div');
+                        appointmentCard.className = 'appointment-card';
+                        appointmentCard.innerHTML = `
+                            <div class="appointment-info">
+                                <h3 style="color: #000000; font-weight: bold;">Patient: ${appointment.first_name} ${appointment.last_name}</h3>
+                                <p class="patient-details">
+                                    <strong>TC:</strong> ${appointment.tc_number}<br>
+                                    <strong>Date of Birth:</strong> ${appointment.date_of_birth}<br>
+                                    <strong>Phone:</strong> ${appointment.phone}<br>
+                                    <strong>Weight:</strong> ${appointment.weight} kg<br>
+                                    <strong>Height:</strong> ${appointment.height} cm
+                                </p>
+                                <p class="datetime">${formattedDate} - ${time}</p>
+                                <p class="status ${appointment.status}">${appointment.status}</p>
+                            </div>
+                            <div class="appointment-actions">
+                                ${appointment.status === 'active' ? `
+                                    <button class="complete-btn" data-id="${appointment.id}">Complete</button>
+                                    <button class="cancel-btn" data-id="${appointment.id}">Cancel</button>
+                                ` : ''}
+                            </div>
+                        `;
+                        appointmentsList.appendChild(appointmentCard);
+                    });
+
+                    // event listeners for buttons
+                    document.querySelectorAll('.complete-btn').forEach(button => {
+                        button.addEventListener('click', function() {
+                            updateAppointmentStatus(this.dataset.id, 'completed');
+                        });
+                    });
+
+                    document.querySelectorAll('.cancel-btn').forEach(button => {
+                        button.addEventListener('click', function() {
+                            if (confirm('Are you sure you want to cancel this appointment?')) {
+                                updateAppointmentStatus(this.dataset.id, 'cancelled');
+                            }
+                        });
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // update appointment status
+        function updateAppointmentStatus(appointmentId, status) {
+            fetch('../php/update_appointment_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    appointment_id: appointmentId,
+                    status: status
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadAppointments(document.getElementById('statusFilter').value);
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            });
+        }
+
+        // filter changes
+        document.getElementById('statusFilter').addEventListener('change', function() {
+            loadAppointments(this.value);
+        });
+
+        // first load
+        loadAppointments();
+    });
+
+    function logout() {
+        localStorage.removeItem('doctorName');
+        localStorage.removeItem('doctorId');
+        window.location.href = 'login.html';
+    }
+    </script>
+</body>
+</html>

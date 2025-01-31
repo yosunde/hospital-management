@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polyclinic Departments</title>
+    <link rel="stylesheet" href="../css/polyclinics.css">
+</head>
+<body>
+    <header>
+        <h1>Hospital Appointment System</h1> <div class="header-right">
+            <span class="isim"></span>
+            <div class="profile-icon onclick="toggleDropdown()"></div> 
+            <div class="dropdown-menu">
+                <button onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </header>
+    <nav>
+        <a href="../html/home.html">Home</a> 
+        <a href="../html/appointment.html" class="randevu-al">Make an Appointment</a> 
+        <a href="../html/myappointment.html">My Appointments</a> 
+        <a href="../html/polyclinics.html">Polyclinics</a> 
+        <a href="../html/aboutus.html">About Us</a> 
+        <a href="../html/contact.html">Contact</a> 
+    </nav>
+    <main>
+        <section class="department-list">
+            <article>
+                <h2>Anesthesia and Reanimation</h2>
+                <p>Specialized in pain management and patient monitoring during surgeries.</p>
+            </article>
+            <article>
+                <h2>Neurosurgery</h2>
+                <p>Focused on the surgical treatment of brain and nerve disorders.</p>
+            </article>
+            <article>
+                <h2>Pediatric Surgery</h2>
+                <p>Dedicated to surgical care for infants, children, and adolescents.</p>
+            </article>
+            <article>
+                <h2>General Surgery</h2>
+                <p>Offering a wide range of surgical services, including abdominal surgeries.</p>
+            </article>
+            <article>
+                <h2>Thoracic Surgery</h2>
+                <p>Specialized in diagnosing and treating chest diseases and conditions.</p>
+            </article>
+            <article>
+                <h2>Ophthalmology</h2>
+                <p>Focused on diagnosing and treating eye-related disorders.</p>
+            </article>
+            <article>
+                <h2>Obstetrics and Gynecology</h2>
+                <p>Providing comprehensive care for women's health and pregnancy.</p>
+            </article>
+            <article>
+                <h2>Cardiovascular Surgery</h2>
+                <p>Focused on heart and blood vessel surgeries.</p>
+            </article>
+            <article>
+                <h2>ENT (Ear, Nose, and Throat)</h2>
+                <p>Treatment of conditions related to the ear, nose, throat, and neck.</p>
+            </article>
+            <article>
+                <h2>Obesity Surgery</h2>
+                <p>Specialized in weight management and obesity-related surgeries.</p>
+            </article>
+            <article>
+                <h2>Organ Transplantation</h2>
+                <p>Providing advanced care for organ transplant procedures.</p>
+            </article>
+            <article>
+                <h2>Orthopedics and Traumatology</h2>
+                <p>Focused on bone, joint, and muscle treatments, including trauma care.</p>
+            </article>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Polyclinic Services. All rights reserved.</p>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // show user name
+            const userName = localStorage.getItem('userName');
+            const userNameElement = document.querySelector('.isim');
+            if (userNameElement && userName) {
+                userNameElement.textContent = userName;
+            } else {
+                
+                window.location.href = '../html/login.html';
+            }
+        });
+    
+        function logout() {
+            localStorage.removeItem('userName');
+            window.location.href = '../html/login.html';
+        }
+    
+        function updateDateTime() {
+            const now = new Date();
+            const dateTimeString = now.toLocaleString('tr-TR');
+            document.getElementById('current-time').textContent = dateTimeString;
+        }
+    
+        setInterval(updateDateTime, 1000);
+        </script>
+</body>
+</html>
